@@ -44,3 +44,15 @@ $fields['billing']['billing_shipping_option'] = array(
     'default' => 'domestic_shipping',
     'priority' => '39',
 );
+
+//배송필드 옵션
+$fields['shipping']['shipping_shipping_option'] = array(
+    'type' => 'radio',
+    'class' => array( 'form-row-wide' ),
+    'options' => array(
+        'domestic_shipping' => __('국내주소', 'twentynineteen-child'),
+        'international_shipping' => __('해외주소', 'twentynineteen-child'),
+    ),
+    'default' => 'domestic_shipping',
+    'priority' => '39',
+);

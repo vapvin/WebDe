@@ -89,3 +89,26 @@ function remove_required_billing_fields($address_fields)
     //	$address_fields['billing_postcode']['required'] = false;
     return $address_fields;
 }
+
+// 사용자가 선택한 주소가 도로명 타입일때 조합한다.
+if(data.userSelectedType === 'R'){
+    //법정동명이 있을 경우 추가한다.
+    if(data.bname !== ''){
+        extraAddr += data.bname;
+    }
+    // 건물명이 있을 경우 추가한다.
+    if(data.buildingName !== ''){
+        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+    }
+    // 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
+    fullAddr += (extraAddr !== '' ? ' ('+ extraAddr +')' : '');
+}
+
+// 우편번호와 주소 정보를 해당 필드에 넣는다.
+document.getElementById('billing_postcode').value = data.zonecode;
+document.getElementById("billing_address_1").value = fullAddr;
+document.getElementById("billing_city").value = '';
+// 커서를 상세주소 필드로 이동한다.
+document.getElementById("billing_address_2").focus();
+}
+}).open();

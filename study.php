@@ -69,3 +69,23 @@ function custom_override_checkout_fields($fields)
 
     return $fields;
 }
+
+
+function shipping_phone_checkout_display($order)
+{
+    echo '<p>' . get_post_meta($order->get_id(), '_shipping_phone1', true) . '</p>';
+}
+add_action('woocommerce_admin_order_data_after_shipping_address', 'shipping_phone_checkout_display');
+
+//결제필드 필수 해제
+add_filter('woocommerce_billing_fields', 'remove_required_billing_fields', 999, 1);
+function remove_required_billing_fields($address_fields)
+{
+    //	$address_fields['billing_country']['required'] = false;
+    //	$address_fields['billing_address_1']['required'] = false;
+    $address_fields['billing_address_2']['required'] = false;
+    $address_fields['billing_city']['required'] = false;
+    $address_fields['billing_state']['required'] = false;
+    //	$address_fields['billing_postcode']['required'] = false;
+    return $address_fields;
+}

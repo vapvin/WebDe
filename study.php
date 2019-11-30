@@ -1,45 +1,71 @@
 <?php
-function shipping_search_postcode(){
-    new daum.Postcode({
-        oncomplete: function(data) {
-            // 팝업에서 검색결과 항목을 클릭했을 때 실행할 코드를 작성하는 부분.
- 
-            // 각 주소의 노출 규칙에 따라 주소를 조합한다.
-            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-            var fullAddr = ''; // 최종 주소 변수
-            var extraAddr = ''; // 조합형 주소 변수
- 
-            // 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-            if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
-                fullAddr = data.roadAddress;
- 
+(function($){
+    var billingPostcodeWrap=$('.woocommerce-billing-fields__field-wrapper .validate-postcode .woocommerce-input-wrapper');
+    var shippingPostcodeWrap=$('.woocommerce-shipping-fields__field-wrapper .validate-postcode .woocommerce-input-wrapper');
+    billingPostcodeWrap.append('<button id="billing-postcode-btn" class="postcode-btn button"><?php _e('우편번호 찾기', 'twentynineteen-child')?></button>');
+    shippingPostcodeWrap.append('<button id="shipping-postcode-btn" class="postcode-btn button"><?php _e('우편번호 찾기', 'twentynineteen-child')?></button>');
+    
+    var billingPostcodeBtn=$('#billing-postcode-btn');
+    var shippingPostcodeBtn=$('#shipping-postcode-btn');
+    
+    billingPostcodeBtn.on('click', function(e){
+        e.preventDefault();
+        billing_search_postcode();      
+    });
+    
+    shippingPostcodeBtn.on('click', function(e){
+        e.preventDefault();
+        shipping_search_postcode();      
+    });
+
+	//다른 주소 배송
+    var shipDiffAdress = $('#ship-to-different-address label');
+    shipDiffAdress.on('change', function(e){
+        var is_checked = $('#ship-to-different-address-checkbox').is(':checked');
+		if(is_checked == false){
+			$('.woocommerce-shipping-fields__field-wrapper input').not('input[type="radio"]').each(function(){
+				$(this).val('');
+			});
+		}
+    });
+
+	//국내/해외배송
+    var billingShppingOption = $('input[name="billing_shipping_option"]');
+    var shippingShppingOption = $('input[name="shipping_shipping_option"]');
+
+    $(document).ready(function(){
+		billing_shipping_option($('input[name="billing_shipping_option"]:checked').val(), '');
+	    shipping_shipping_option($('input[name="shipping_shipping_option"]:checked').val(), '');
+
+	    //국가선택 이벤트
+	    $(document.body).on('country_to_state_changing', function(event, country, wrapper) {
+	    	//우편번호를 무조건 첫번째로
+	    	//console.log($('input[name="billing_shipping_option"]:checked').val());
+	    	if($('input[name="billing_shipping_option"]:checked').val() == 'domestic_shipping'){
+	    		setTimeout(function() {
+	            	$('#billing_postcode_field').insertBefore($('#billing_address_1_field'));
+	            }, 50);
+	    	}
+	    	
+	    	if($('input[name="shipping_shipping_option"]:checked').val() == 'domestic_shipping'){
+	    		setTimeout(function() {
+	            	$('#shipping_postcode_field').insertBefore($('#shipping_address_1_field'));
+	            }, 50);
+	    	}        
+            
+            var billing = wrapper.hasClass('woocommerce-billing-fields');
+            var shipping = wrapper.hasClass('woocommerce-shipping-fields');
+
+            if(billing){
+            	billing_shipping_option('', country);
+            	
             }
-            else { // 사용자가 지번 주소를 선택했을 경우(J)
-                fullAddr = data.jibunAddress;
+            if(shipping){
+            	shipping_shipping_option('', country);
             }
- 
-            // 사용자가 선택한 주소가 도로명 타입일때 조합한다.
-            if(data.userSelectedType === 'R'){
-                //법정동명이 있을 경우 추가한다.
-                if(data.bname !== ''){
-                    extraAddr += data.bname;
-                }
-                // 건물명이 있을 경우 추가한다.
-                if(data.buildingName !== ''){
-                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                }
-                // 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
-                fullAddr += (extraAddr !== '' ? ' ('+ extraAddr +')' : '');
-            }
- 
-            // 우편번호와 주소 정보를 해당 필드에 넣는다.
-            document.getElementById('shipping_postcode').value = data.zonecode;
-            document.getElementById("shipping_address_1").value = fullAddr;
-            document.getElementById("shipping_city").value = '';
-            // 커서를 상세주소 필드로 이동한다.
-            document.getElementById("shipping_address_2").focus();
-        }
-    }).open();
-}
+        });
+
+        
+	});
 
 ?>

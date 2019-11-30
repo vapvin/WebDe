@@ -32,3 +32,15 @@ function custom_override_checkout_fields( $fields ) {
 2. 주문 관련 메시지나 배송 관련 메모를 남겨주세요.
 예) 갑티슈는 안 보내셔도 됩니다
 예) 경비실에 맡겨 주세요.";
+
+//청구필드 옵션
+$fields['billing']['billing_shipping_option'] = array(
+    'type' => 'radio',
+    'class' => array( 'form-row-wide' ),
+    'options' => array(
+        'domestic_shipping' => __('국내주소', 'twentynineteen-child'),
+        'international_shipping' => __('해외주소', 'twentynineteen-child'),
+    ),
+    'default' => 'domestic_shipping',
+    'priority' => '39',
+);

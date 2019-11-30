@@ -24,4 +24,11 @@ function custom_override_checkout_fields( $fields ) {
 	//	unset($fields['shipping']['shipping_address_2']);
 	//	unset($fields['shipping']['shipping_city']);
 	//	unset($fields['shipping']['shipping_state']);
-	//	unset($fields['shipping']['shipping_postcode']);
+    //	unset($fields['shipping']['shipping_postcode']);
+    
+    //주문메모 필드
+	$fields['order']['order_comments']['placeholder'] = "";
+	$fields['order']['order_comments']['default'] = "1. 해외 배송을 원하시는 경우 거주하시는 해외 현지 주소를 적어주세요.
+2. 주문 관련 메시지나 배송 관련 메모를 남겨주세요.
+예) 갑티슈는 안 보내셔도 됩니다
+예) 경비실에 맡겨 주세요.";
